@@ -107,7 +107,7 @@ body{background:var(--bg);font-family:'Crimson Pro',serif;color:var(--white);dis
     <div class="field"><label>Mot de passe</label><input type="password" id="password" placeholder="••••••••" autocomplete="new-password"><div class="field-hint">4 caractères minimum</div></div>
     <div class="field"><label>Confirmer</label><input type="password" id="confirm" placeholder="••••••••" autocomplete="new-password"></div>
 
-    <button class="btn-submit" id="regBtn" onclick="doRegister()">
+    <button class="btn-submit" id="regBtn">
       <div class="btn-inner"><span id="btnTxt">Créer mon compte</span><div class="spin" id="spin"></div></div>
     </button>
     <div class="divider">OU</div>
@@ -117,6 +117,7 @@ body{background:var(--bg);font-family:'Crimson Pro',serif;color:var(--white);dis
 </div>
 <script>
 requireGuest();
+document.getElementById('regBtn').addEventListener('click', function(){ doRegister(); });
 const AVATARS = ['🃏','♠️','♥️','♦️','♣️','🎴','🦁','🐆','🦅','🌟','🔥','💎','👑','🎯','⚡','🏆'];
 let selectedAvatar = '🃏';
 const grid = document.getElementById('avatarGrid');
@@ -127,7 +128,7 @@ AVATARS.forEach(a => {
   btn.onclick = () => { selectedAvatar=a; document.querySelectorAll('.av-btn').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); };
   grid.appendChild(btn);
 });
-document.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
+document.addEventListener('keydown',e=>{if(e.key==='Enter' && !document.getElementById('regBtn').disabled) doRegister();});
 function showErr(msg){const b=document.getElementById('errBox');b.textContent=msg;b.classList.add('show');}
 async function doRegister(){
   const u=document.getElementById('username').value.trim();

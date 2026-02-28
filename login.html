@@ -69,7 +69,7 @@ body{background:var(--bg);font-family:'Crimson Pro',serif;color:var(--white);dis
     <div class="error-box" id="errBox"></div>
     <div class="field"><label>Pseudo</label><input type="text" id="username" placeholder="votre_pseudo" autocomplete="username" autofocus></div>
     <div class="field"><label>Mot de passe</label><input type="password" id="password" placeholder="••••••••" autocomplete="current-password"></div>
-    <button class="btn-submit" id="loginBtn" onclick="doLogin()">
+    <button class="btn-submit" id="loginBtn">
       <div class="btn-inner"><span id="btnTxt">Se connecter</span><div class="spin" id="spin"></div></div>
     </button>
     <div class="divider">OU</div>
@@ -79,7 +79,8 @@ body{background:var(--bg);font-family:'Crimson Pro',serif;color:var(--white);dis
 </div>
 <script>
 requireGuest();
-document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+document.getElementById('loginBtn').addEventListener('click', function(){ doLogin(); });
+document.addEventListener('keydown',e=>{if(e.key==='Enter' && !document.getElementById('loginBtn').disabled) doLogin();});
 function showErr(msg){const b=document.getElementById('errBox');b.textContent=msg;b.classList.add('show');}
 async function doLogin(){
   const u=document.getElementById('username').value.trim();
