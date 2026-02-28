@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POKO — Mon Compte</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="auth.js"></script>
+<style>
+:root{--gold:#c9a84c;--gold-light:#e8c76a;--green:#0f3d1f;--green-mid:#1a5c2e;--white:#f0ead6;--bg:#081c0e;--card:rgba(255,255,255,.04);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);font-family:'Crimson Pro',serif;color:var(--white);min-height:100vh;}
+body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(ellipse at 20% 0%,rgba(26,92,46,.4) 0%,transparent 60%),radial-gradient(ellipse at 80% 100%,rgba(15,61,31,.5) 0%,transparent 60%);pointer-events:none;z-index:0;}
+
+/* ── TOP NAV ── */
+.nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(8,28,14,.85);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(201,168,76,.15);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;height:60px;
+}
+.nav-logo{font-family:'Playfair Display',serif;font-size:22px;color:var(--gold);letter-spacing:6px;text-decoration:none;}
+.nav-user{display:flex;align-items:center;gap:12px;}
+.nav-avatar{font-size:22px;}
+.nav-name{font-size:14px;color:var(--white);letter-spacing:1px;}
+.nav-balance{font-size:12px;color:var(--gold);letter-spacing:1px;font-weight:600;}
+.nav-btns{display:flex;gap:8px;}
+.nav-btn{padding:7px 16px;border:1px solid rgba(201,168,76,.3);background:transparent;color:var(--gold);font-family:'Crimson Pro',serif;font-size:13px;cursor:pointer;border-radius:2px;transition:all .2s;text-decoration:none;letter-spacing:1px;white-space:nowrap;}
+.nav-btn:hover{background:rgba(201,168,76,.1);}
+.nav-btn.primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1200;border-color:transparent;font-weight:600;}
+.nav-btn.primary:hover{box-shadow:0 4px 16px rgba(201,168,76,.3);}
+
+/* ── CONTENT ── */
+.content{position:relative;z-index:1;max-width:1100px;margin:0 auto;padding:32px 24px;}
+
+/* ── HERO PROFILE ── */
+.hero{
+  display:flex;align-items:center;gap:28px;flex-wrap:wrap;
+  background:var(--card);border:1px solid rgba(201,168,76,.15);border-radius:10px;
+  padding:28px 32px;margin-bottom:28px;
+  background:linear-gradient(135deg,rgba(201,168,76,.06) 0%,rgba(0,0,0,.3) 100%);
+}
+.hero-avatar{font-size:56px;line-height:1;}
+.hero-info{flex:1;}
+.hero-username{font-family:'Playfair Display',serif;font-size:28px;color:var(--white);margin-bottom:4px;}
+.hero-joined{font-size:12px;color:rgba(240,234,214,.35);letter-spacing:2px;text-transform:uppercase;}
+.hero-balance{text-align:right;}
+.balance-label{font-size:10px;letter-spacing:3px;color:rgba(240,234,214,.35);text-transform:uppercase;margin-bottom:4px;}
+.balance-amount{font-family:'Playfair Display',serif;font-size:34px;color:var(--gold);font-weight:700;letter-spacing:2px;}
+.balance-sub{font-size:11px;color:rgba(240,234,214,.3);letter-spacing:1px;}
+
+/* Daily bonus */
+.daily-btn{
+  margin-top:12px;padding:9px 20px;
+  background:rgba(201,168,76,.12);border:1px solid rgba(201,168,76,.3);
+  color:var(--gold);font-family:'Crimson Pro',serif;font-size:13px;cursor:pointer;
+  border-radius:3px;transition:all .2s;letter-spacing:1px;display:inline-block;
+}
+.daily-btn:hover{background:rgba(201,168,76,.2);}
+.daily-btn.claimed{opacity:.4;cursor:not-allowed;background:transparent;}
+
+/* ── STATS GRID ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:28px;}
+.stat-card{
+  background:var(--card);border:1px solid rgba(255,255,255,.06);
+  border-radius:7px;padding:20px 18px;text-align:center;
+  transition:border-color .2s,transform .2s;
+}
+.stat-card:hover{border-color:rgba(201,168,76,.2);transform:translateY(-2px);}
+.stat-icon{font-size:24px;margin-bottom:8px;}
+.stat-val{font-family:'Playfair Display',serif;font-size:26px;color:var(--gold);font-weight:700;line-height:1;}
+.stat-label{font-size:10px;letter-spacing:2px;color:rgba(240,234,214,.35);text-transform:uppercase;margin-top:5px;}
+
+/* ── TABS ── */
+.tabs{display:flex;gap:0;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:24px;}
+.tab{padding:12px 22px;font-size:12px;letter-spacing:2px;color:rgba(240,234,214,.4);text-transform:uppercase;cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:'Crimson Pro',serif;}
+.tab:hover{color:rgba(240,234,214,.7);}
+.tab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+.tab-panel{display:none;animation:fadeIn .3s ease;}
+.tab-panel.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION TITLES ── */
+.section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.section-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);}
+.section-note{font-size:11px;color:rgba(240,234,214,.3);letter-spacing:1px;}
+
+/* ── TRANSACTIONS ── */
+.tx-list{display:flex;flex-direction:column;gap:8px;}
+.tx-item{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1px solid rgba(255,255,255,.05);
+  border-radius:5px;padding:14px 16px;transition:background .2s;
+}
+.tx-item:hover{background:rgba(255,255,255,.06);}
+.tx-icon{font-size:18px;width:28px;text-align:center;flex-shrink:0;}
+.tx-info{flex:1;}
+.tx-label{font-size:15px;color:var(--white);}
+.tx-date{font-size:11px;color:rgba(240,234,214,.3);letter-spacing:1px;margin-top:2px;}
+.tx-amount{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;white-space:nowrap;}
+.tx-amount.pos{color:#4ade80;}
+.tx-amount.neg{color:#ff7a7a;}
+.tx-balance{font-size:11px;color:rgba(240,234,214,.25);text-align:right;margin-top:2px;}
+
+/* ── HISTORY TABLE ── */
+.history-list{display:flex;flex-direction:column;gap:8px;}
+.hist-item{
+  display:flex;align-items:center;gap:14px;
+  background:var(--card);border:1px solid rgba(255,255,255,.05);
+  border-radius:5px;padding:14px 16px;
+}
+.hist-result{font-size:18px;flex-shrink:0;width:28px;text-align:center;}
+.hist-info{flex:1;}
+.hist-label{font-size:15px;color:var(--white);}
+.hist-date{font-size:11px;color:rgba(240,234,214,.3);letter-spacing:1px;margin-top:2px;}
+.hist-change{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;}
+.hist-change.pos{color:#4ade80;}
+.hist-change.neg{color:#ff7a7a;}
+
+/* ── LEADERBOARD ── */
+.lb-table{width:100%;border-collapse:collapse;}
+.lb-table th{font-size:9px;letter-spacing:3px;color:rgba(240,234,214,.3);text-transform:uppercase;padding:10px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.07);}
+.lb-table td{padding:13px 14px;border-bottom:1px solid rgba(255,255,255,.04);font-size:15px;}
+.lb-table tr:hover td{background:rgba(255,255,255,.03);}
+.lb-rank{font-family:'Playfair Display',serif;font-size:18px;color:rgba(240,234,214,.3);font-weight:700;width:50px;}
+.lb-rank.top1{color:#ffd700;}
+.lb-rank.top2{color:#c0c0c0;}
+.lb-rank.top3{color:#cd7f32;}
+.lb-me{background:rgba(201,168,76,.06)!important;}
+.lb-me td{border-color:rgba(201,168,76,.15);}
+.lb-avatar{font-size:20px;width:36px;}
+.lb-name{font-weight:600;}
+.lb-name.me{color:var(--gold);}
+.lb-wins{color:var(--gold);font-family:'Playfair Display',serif;font-weight:700;}
+.lb-rate{color:rgba(240,234,214,.5);}
+.lb-earned{color:#4ade80;}
+
+/* ── WALLET ── */
+.wallet-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:600px;}
+@media(max-width:580px){.wallet-grid{grid-template-columns:1fr;}}
+.wallet-card{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:24px;}
+.wallet-card-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--white);margin-bottom:4px;}
+.wallet-card-sub{font-size:11px;color:rgba(240,234,214,.3);letter-spacing:1px;margin-bottom:18px;}
+.w-amounts{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.w-preset{padding:8px 14px;background:rgba(240,234,214,.05);border:1px solid rgba(240,234,214,.1);border-radius:3px;color:var(--white);font-family:'Crimson Pro',serif;font-size:14px;cursor:pointer;transition:all .2s;}
+.w-preset:hover{border-color:rgba(201,168,76,.4);color:var(--gold);}
+.w-input{width:100%;padding:11px 14px;background:rgba(0,0,0,.3);border:1px solid rgba(240,234,214,.1);border-radius:3px;color:var(--white);font-family:'Crimson Pro',serif;font-size:16px;outline:none;transition:all .2s;margin-bottom:12px;}
+.w-input:focus{border-color:rgba(201,168,76,.5);box-shadow:0 0 0 3px rgba(201,168,76,.07);}
+.w-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1200;border:none;border-radius:3px;font-family:'Playfair Display',serif;font-size:13px;font-weight:700;letter-spacing:3px;cursor:pointer;transition:all .2s;}
+.w-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(201,168,76,.3);}
+.w-btn.withdraw{background:transparent;color:rgba(240,234,214,.6);border:1px solid rgba(240,234,214,.15);}
+.w-btn.withdraw:hover{color:var(--white);background:rgba(255,255,255,.05);box-shadow:none;}
+.w-msg{font-size:13px;padding:10px 14px;border-radius:3px;margin-top:10px;display:none;}
+.w-msg.ok{background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.25);color:#4ade80;display:block;}
+.w-msg.err{background:rgba(255,122,122,.1);border:1px solid rgba(255,122,122,.25);color:#ff7a7a;display:block;}
+
+/* Empty state */
+.empty{text-align:center;padding:50px 20px;color:rgba(240,234,214,.3);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+.empty-text{font-size:15px;letter-spacing:1px;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">POKO</a>
+  <div class="nav-user" id="navUser"></div>
+  <div class="nav-btns">
+    <a href="index.html" class="nav-btn">Accueil</a>
+    <a href="options.html" class="nav-btn primary">▶ Jouer</a>
+  </div>
+</nav>
+
+<div class="content">
+
+  <!-- HERO -->
+  <div class="hero" id="heroSection"></div>
+
+  <!-- STATS -->
+  <div class="stats-grid" id="statsGrid"></div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('transactions')">Transactions</button>
+    <button class="tab" onclick="switchTab('history')">Historique Parties</button>
+    <button class="tab" onclick="switchTab('leaderboard')">Classement</button>
+    <button class="tab" onclick="switchTab('wallet')">Portefeuille</button>
+  </div>
+
+  <div class="tab-panel active" id="tab-transactions"></div>
+  <div class="tab-panel" id="tab-history"></div>
+  <div class="tab-panel" id="tab-leaderboard"></div>
+  <div class="tab-panel" id="tab-wallet"></div>
+
+</div>
+
+<script>
+await requireAuth();
+const user = await POKO_DB.currentUserAsync();
+if(!user){ window.location.href='login.html'; throw ''; }
+
+// ── NAV ──
+document.getElementById('navUser').innerHTML = `
+  <span class="nav-avatar">${user.avatar||'🃏'}</span>
+  <div>
+    <div class="nav-name">${user.username}</div>
+    <div class="nav-balance">${user.balance.toLocaleString('fr-FR')} FCFA</div>
+  </div>
+  <button onclick="POKO_DB.logout()" style="background:transparent;border:1px solid rgba(240,234,214,.15);color:rgba(240,234,214,.4);padding:6px 12px;font-family:Crimson Pro,serif;font-size:12px;cursor:pointer;border-radius:2px;letter-spacing:1px;transition:all .2s;" onmouseover="this.style.color='rgba(240,234,214,.8)'" onmouseout="this.style.color='rgba(240,234,214,.4)'">Déconnexion</button>
+`;
+
+// ── HERO ──
+const canDaily = await POKO_DB.canClaimDaily();
+document.getElementById('heroSection').innerHTML = `
+  <div class="hero-avatar">${user.avatar||'🃏'}</div>
+  <div class="hero-info">
+    <div class="hero-username">${user.username}</div>
+    <div class="hero-joined">Membre depuis ${POKO_DB.formatDate(user.createdAt)}</div>
+    <button class="daily-btn ${canDaily?'':'claimed'}" onclick="claimDaily(this)">
+      ${canDaily ? '☀️ Réclamer bonus quotidien (+500 FCFA)' : '✅ Bonus quotidien réclamé'}
+    </button>
+  </div>
+  <div class="hero-balance">
+    <div class="balance-label">Solde disponible</div>
+    <div class="balance-amount" id="heroBalance">${user.balance.toLocaleString('fr-FR')} FCFA</div>
+    <div class="balance-sub">Dernière connexion : ${POKO_DB.formatDate(user.lastLogin)}</div>
+  </div>
+`;
+
+function claimDaily(btn){
+  const r=await POKO_DB.claimDailyBonus();
+  if(r.ok){
+    btn.className='daily-btn claimed';
+    btn.textContent='✅ Bonus quotidien réclamé';
+    refreshBalance();
+    renderTransactions();
+  } else alert(r.msg);
+}
+
+// ── STATS ──
+const winRate = user.totalGames>0 ? Math.round((user.totalWins/user.totalGames)*100) : 0;
+const statsData = [
+  {icon:'🎮',val:user.totalGames,label:'Parties jouées'},
+  {icon:'🏆',val:user.totalWins,label:'Victoires'},
+  {icon:'📊',val:winRate+'%',label:'Taux de victoire'},
+  {icon:'🔥',val:user.longestWinStreak||0,label:'Meilleure série'},
+  {icon:'📈',val:(user.totalEarned||0).toLocaleString('fr-FR'),label:'Total gagné (FCFA)'},
+  
+];
+document.getElementById('statsGrid').innerHTML = statsData.map(s=>`
+  <div class="stat-card">
+    <div class="stat-icon">${s.icon}</div>
+    <div class="stat-val">${s.val}</div>
+    <div class="stat-label">${s.label}</div>
+  </div>
+`).join('');
+
+// ── TABS ──
+function switchTab(name){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const tabs=['transactions','history','leaderboard','wallet'];
+    t.classList.toggle('active',tabs[i]===name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='leaderboard') renderLeaderboard();
+}
+
+// ── TRANSACTIONS ──
+function renderTransactions(){
+  const txs=await POKO_DB.getTransactions(user.username);
+  const el=document.getElementById('tab-transactions');
+  if(!txs.length){el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Aucune transaction</div></div>';return;}
+  const typeIcon={bonus:'🎁',deposit:'💳',withdraw:'🏦',win:'🏆',loss:'❌',gameover:'💀'};
+  el.innerHTML=`
+    <div class="section-header">
+      <div class="section-title">Transactions</div>
+      <div class="section-note">${txs.length} entrées</div>
+    </div>
+    <div class="tx-list">${txs.slice(0,30).map(tx=>{
+      const pos=tx.amount>0;
+      return `<div class="tx-item">
+        <div class="tx-icon">${typeIcon[tx.type]||'💰'}</div>
+        <div class="tx-info">
+          <div class="tx-label">${tx.label}</div>
+          <div class="tx-date">${POKO_DB.formatDate(tx.date)}</div>
+        </div>
+        <div>
+          <div class="tx-amount ${pos?'pos':'neg'}">${pos?'+':''}${tx.amount.toLocaleString('fr-FR')} FCFA</div>
+          <div class="tx-balance">Solde: ${(tx.balance||0).toLocaleString('fr-FR')} FCFA</div>
+        </div>
+      </div>`;
+    }).join('')}</div>
+  `;
+}
+renderTransactions();
+
+// ── HISTORY ──
+function renderHistory(){
+  const hist=await POKO_DB.getGameHistory(user.username);
+  const el=document.getElementById('tab-history');
+  if(!hist.length){el.innerHTML='<div class="empty"><div class="empty-icon">🃏</div><div class="empty-text">Aucune partie jouée</div></div>';return;}
+  el.innerHTML=`
+    <div class="section-header">
+      <div class="section-title">Historique des parties</div>
+      <div class="section-note">${hist.length} parties</div>
+    </div>
+    <div class="history-list">${hist.map(h=>{
+      const icon=h.result==='win'?'🏆':h.result==='gameover'?'💀':'❌';
+      const pos=h.change>0;
+      return `<div class="hist-item">
+        <div class="hist-result">${icon}</div>
+        <div class="hist-info">
+          <div class="hist-label">${h.label||'Partie'}</div>
+          <div class="hist-date">${POKO_DB.formatDate(h.date)} · Mise : ${h.mise.toLocaleString('fr-FR')} FCFA</div>
+        </div>
+        <div class="hist-change ${pos?'pos':'neg'}">${pos?'+':''}${h.change.toLocaleString('fr-FR')} FCFA</div>
+      </div>`;
+    }).join('')}</div>
+  `;
+}
+renderHistory();
+document.querySelector('.tab[onclick*="history"]').addEventListener('click',renderHistory);
+
+// ── LEADERBOARD ──
+function renderLeaderboard(){
+  const lb=await POKO_DB.leaderboard();
+  const me=user.username;
+  const el=document.getElementById('tab-leaderboard');
+  if(!lb.length){el.innerHTML='<div class="empty"><div class="empty-icon">🏆</div><div class="empty-text">Aucun joueur classé</div></div>';return;}
+  const rankLabel=(i)=>{if(i===0)return'🥇';if(i===1)return'🥈';if(i===2)return'🥉';return'#'+(i+1);};
+  const rankClass=(i)=>{if(i===0)return'lb-rank top1';if(i===1)return'lb-rank top2';if(i===2)return'lb-rank top3';return'lb-rank';};
+  el.innerHTML=`
+    <div class="section-header"><div class="section-title">Classement Général</div><div class="section-note">Top ${lb.length} joueurs</div></div>
+    <table class="lb-table">
+      <thead><tr><th>#</th><th></th><th>Joueur</th><th>Victoires</th><th>Parties</th><th>Win Rate</th><th>Gains totaux</th></tr></thead>
+      <tbody>${lb.map((p,i)=>`
+        <tr class="${p.username===me?'lb-me':''}">
+          <td class="${rankClass(i)}">${rankLabel(i)}</td>
+          <td class="lb-avatar">${p.avatar}</td>
+          <td class="lb-name${p.username===me?' me':''}">${p.username}${p.username===me?' (vous)':''}</td>
+          <td class="lb-wins">${p.totalWins}</td>
+          <td class="lb-rate">${p.totalGames}</td>
+          <td class="lb-rate">${p.winRate}%</td>
+          <td class="lb-earned">+${p.totalEarned.toLocaleString('fr-FR')} FCFA</td>
+        </tr>
+      `).join('')}</tbody>
+    </table>
+  `;
+}
+
+// ── WALLET ──
+document.getElementById('tab-wallet').innerHTML = `
+  <div class="section-header"><div class="section-title">Portefeuille</div></div>
+  <div class="wallet-grid">
+    <div class="wallet-card">
+      <div class="wallet-card-title">💳 Dépôt</div>
+      <div class="wallet-card-sub">AJOUTER DES FONDS</div>
+      <div class="w-amounts">
+        ${[1000,2500,5000,10000].map(a=>`<button class="w-preset" onclick="setAmount('dep',${a})">${a.toLocaleString()}</button>`).join('')}
+      </div>
+      <input class="w-input" type="number" id="depAmount" placeholder="Montant en FCFA" min="100">
+      <button class="w-btn" onclick="doDeposit()">DÉPOSER</button>
+      <div class="w-msg" id="depMsg"></div>
+    </div>
+    <div class="wallet-card">
+      <div class="wallet-card-title">🏦 Retrait</div>
+      <div class="wallet-card-sub">RETIRER VOS GAINS</div>
+      <div class="w-amounts">
+        ${[500,1000,2000,5000].map(a=>`<button class="w-preset" onclick="setAmount('wd',${a})">${a.toLocaleString()}</button>`).join('')}
+      </div>
+      <input class="w-input" type="number" id="wdAmount" placeholder="Montant en FCFA" min="100">
+      <button class="w-btn withdraw" onclick="doWithdraw()">RETIRER</button>
+      <div class="w-msg" id="wdMsg"></div>
+    </div>
+  </div>
+`;
+
+function setAmount(t,v){document.getElementById(t+'Amount').value=v;}
+function refreshBalance(){
+  const u=await POKO_DB.currentUserAsync();
+  if(!u)return;
+  document.getElementById('heroBalance').textContent=u.balance.toLocaleString('fr-FR')+' FCFA';
+  document.querySelector('.nav-balance').textContent=u.balance.toLocaleString('fr-FR')+' FCFA';
+}
+function doDeposit(){
+  const a=parseInt(document.getElementById('depAmount').value)||0;
+  const msg=document.getElementById('depMsg');
+  msg.className='w-msg';
+  if(a<100){msg.className='w-msg err';msg.textContent='Minimum 100 FCFA.';return;}
+  const r=await POKO_DB.deposit(a);
+  if(r.ok){
+    msg.className='w-msg ok';msg.textContent=`✅ +${a.toLocaleString('fr-FR')} FCFA crédités. Solde: ${r.balance.toLocaleString('fr-FR')} FCFA`;
+    refreshBalance();renderTransactions();
+  }
+}
+function doWithdraw(){
+  const a=parseInt(document.getElementById('wdAmount').value)||0;
+  const msg=document.getElementById('wdMsg');
+  msg.className='w-msg';
+  if(a<100){msg.className='w-msg err';msg.textContent='Minimum 100 FCFA.';return;}
+  const r=await POKO_DB.withdraw(a);
+  if(r.ok){
+    msg.className='w-msg ok';msg.textContent=`✅ ${a.toLocaleString('fr-FR')} FCFA retirés. Solde: ${r.balance.toLocaleString('fr-FR')} FCFA`;
+    refreshBalance();renderTransactions();
+  } else {msg.className='w-msg err';msg.textContent=r.msg;}
+}
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POKO — Options</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="auth.js"></script>
+<style>
+  :root { --gold:#d4a017; --gold-light:#f0c040; --red:#c0392b; --white:#f5f0e8; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    background: radial-gradient(ellipse at center, #1e6b3a 0%, #0d3018 70%);
+    min-height: 100vh;
+    font-family: 'Space Mono', monospace;
+    color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+  }
+  body::before {
+    content:''; position:fixed; inset:0;
+    background-image: repeating-linear-gradient(45deg,transparent,transparent 2px,rgba(0,0,0,.03) 2px,rgba(0,0,0,.03) 4px);
+    pointer-events:none;
+  }
+
+  .page {
+    position: relative; z-index: 1;
+    width: 100%; max-width: 560px;
+    padding: 40px 24px;
+    animation: slideIn .5s ease;
+  }
+  @keyframes slideIn { from { opacity:0; transform:translateX(30px); } to { opacity:1; transform:translateX(0); } }
+
+  /* Header */
+  .page-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 36px;
+  }
+  .back-btn {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(212,160,23,.4);
+    background: transparent; color: var(--gold);
+    border-radius: 2px; cursor: pointer;
+    font-size: 16px; transition: all .2s;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .back-btn:hover { background: rgba(212,160,23,.1); }
+
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 28px; color: var(--gold); letter-spacing: 3px;
+  }
+  .page-title span { font-size: 12px; display: block; letter-spacing: 4px; color: rgba(212,160,23,.5); margin-top: 2px; font-family: 'Space Mono', monospace; font-weight: 400; }
+
+  /* Option cards */
+  .option-card {
+    background: rgba(0,0,0,.35);
+    border: 1px solid rgba(212,160,23,.2);
+    border-radius: 6px;
+    padding: 22px 26px;
+    margin-bottom: 16px;
+    transition: border-color .2s;
+  }
+  .option-card:hover { border-color: rgba(212,160,23,.4); }
+
+  .option-header {
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 14px;
+  }
+  .option-icon { font-size: 18px; }
+  .option-name { font-size: 10px; letter-spacing: 3px; color: var(--gold); text-transform: uppercase; }
+  .option-desc { font-size: 9px; color: rgba(245,240,232,.4); letter-spacing: 1px; margin-left: auto; }
+
+  .option-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .opt-btn {
+    padding: 10px 20px;
+    border: 1px solid rgba(245,240,232,.25);
+    background: transparent; color: rgba(245,240,232,.7);
+    font-family: 'Space Mono', monospace; font-size: 11px;
+    cursor: pointer; border-radius: 3px; transition: all .2s;
+    letter-spacing: 1px; flex: 1; min-width: 120px; text-align: center;
+  }
+  .opt-btn:hover { border-color: rgba(212,160,23,.5); color: var(--white); }
+  .opt-btn.selected {
+    background: linear-gradient(135deg, rgba(212,160,23,.25), rgba(212,160,23,.15));
+    color: var(--gold-light); border-color: var(--gold); font-weight: 700;
+  }
+
+  /* Mise input */
+  .mise-row { display: flex; align-items: center; gap: 14px; }
+  .mise-input {
+    background: rgba(0,0,0,.5);
+    border: 1px solid rgba(212,160,23,.4);
+    color: var(--gold); font-family: 'Space Mono', monospace;
+    font-size: 22px; font-weight: 700;
+    padding: 10px 16px; width: 160px; text-align: center; border-radius: 3px;
+    outline: none; transition: border-color .2s;
+  }
+  .mise-input:focus { border-color: var(--gold); box-shadow: 0 0 0 2px rgba(212,160,23,.2); }
+  .mise-currency { font-size: 12px; color: rgba(245,240,232,.5); letter-spacing: 2px; }
+  .mise-total { font-size: 10px; color: rgba(245,240,232,.4); letter-spacing: 1px; margin-left: auto; }
+  .mise-total span { color: var(--gold); font-weight: 700; }
+
+  /* Preview panel */
+  .preview {
+    background: rgba(0,0,0,.2);
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 4px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    display: flex; gap: 20px; flex-wrap: wrap;
+  }
+  .preview-item { font-size: 9px; letter-spacing: 1px; color: rgba(245,240,232,.4); }
+  .preview-item span { display: block; color: var(--white); font-size: 11px; margin-top: 3px; letter-spacing: 1px; }
+
+  /* Buttons */
+  .btn-row { display: flex; gap: 12px; }
+  .btn {
+    background: linear-gradient(135deg, var(--gold), var(--gold-light));
+    color: #1a1a1a; border: none;
+    padding: 15px 0; flex: 1;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    cursor: pointer; border-radius: 3px;
+    transition: all .25s;
+    box-shadow: 0 4px 20px rgba(212,160,23,.3);
+  }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(212,160,23,.5); }
+  .btn:active { transform: translateY(0); }
+
+  /* KIN info tooltip */
+  .info-tag {
+    display: inline-block; font-size: 9px; letter-spacing: 1px;
+    color: rgba(245,240,232,.35); margin-top: 8px;
+    padding: 4px 10px; border: 1px solid rgba(255,255,255,.08);
+    border-radius: 2px;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div id="balanceBanner" style="background:rgba(212,160,23,.1);border:1px solid rgba(212,160,23,.2);border-radius:3px;padding:10px 20px;margin-bottom:16px;font-size:12px;color:rgba(245,240,232,.7);letter-spacing:1px;text-align:center;display:none;"></div>
+  <div class="page-header">
+    <a href="index.html" class="back-btn">←</a>
+    <div class="page-title">
+      Options
+      <span>CONFIGURATION DE LA PARTIE</span>
+    </div>
+  </div>
+
+  <!-- MISE -->
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-icon">💰</span>
+      <span class="option-name">Mise par joueur</span>
+    </div>
+    <div class="mise-row">
+      <input type="number" class="mise-input" id="miseInput" value="100" min="0" step="50" oninput="validateMise(this)" onkeypress="return /[0-9]/.test(event.key)">
+      <span class="mise-currency">FCFA</span>
+      <div class="mise-total">Cagnotte totale<span id="totalPot">400 FCFA</span></div>
+    </div>
+  </div>
+
+  <!-- SABOT -->
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-icon">🃏</span>
+      <span class="option-name">Option Sabot</span>
+      <span class="option-desc">Cartes défaussées</span>
+    </div>
+    <div class="option-row">
+      <button class="opt-btn selected" id="sabotRemis"  onclick="selectOpt('sabot','remis')">Remises dans le sabot</button>
+      <button class="opt-btn"          id="sabotEcarte" onclick="selectOpt('sabot','ecarte')">Écartées définitivement</button>
+    </div>
+  </div>
+
+  <!-- KIN -->
+  <div class="option-card">
+    <div class="option-header">
+      <span class="option-icon">⚡</span>
+      <span class="option-name">Option KIN</span>
+      <span class="option-desc">Règle spéciale</span>
+    </div>
+    <div class="option-row">
+      <button class="opt-btn selected" id="kinActif"   onclick="selectOpt('kin','actif')">KIN Activé</button>
+      <button class="opt-btn"          id="kinInactif" onclick="selectOpt('kin','inactif')">KIN Désactivé</button>
+    </div>
+    <div class="info-tag" id="kinInfo">✦ 4 cartes de même couleur = sortie automatique de l'étape</div>
+  </div>
+
+  <!-- Summary -->
+  <div class="preview">
+    <div class="preview-item">MISE<span id="prev-mise">100 FCFA</span></div>
+    <div class="preview-item">SABOT<span id="prev-sabot">Remis</span></div>
+    <div class="preview-item">KIN<span id="prev-kin">Activé</span></div>
+    <div class="preview-item">JOUEURS<span>4 (dont vous)</span></div>
+    <div class="preview-item">ÉTAPES<span>3 étapes</span></div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn" onclick="startGame()">▶ LANCER LA PARTIE</button>
+  </div>
+
+</div>
+
+<script>
+let opts = { sabot: 'remis', kin: 'actif' };
+
+function selectOpt(type, val) {
+  opts[type] = val;
+  if(type === 'sabot') {
+    document.getElementById('sabotRemis').classList.toggle('selected', val==='remis');
+    document.getElementById('sabotEcarte').classList.toggle('selected', val==='ecarte');
+    document.getElementById('prev-sabot').textContent = val==='remis' ? 'Remis' : 'Écarté';
+  } else {
+    document.getElementById('kinActif').classList.toggle('selected', val==='actif');
+    document.getElementById('kinInactif').classList.toggle('selected', val==='inactif');
+    document.getElementById('prev-kin').textContent = val==='actif' ? 'Activé' : 'Désactivé';
+    document.getElementById('kinInfo').textContent = val==='actif'
+      ? '✦ 4 cartes de même couleur = sortie automatique de l\'étape'
+      : '✦ Finale : le joueur avec 4 cartes de même couleur échange 2 cartes';
+  }
+}
+
+function updatePreview() {
+  const mise = parseInt(document.getElementById('miseInput').value) || 0;
+  document.getElementById('totalPot').textContent = (mise*4).toLocaleString() + ' FCFA';
+  document.getElementById('prev-mise').textContent = mise.toLocaleString() + ' FCFA';
+}
+
+function startGame() {
+  const mise = parseInt(document.getElementById('miseInput').value) || 0;
+  // If logged in, check balance and deduct mise
+  const user = POKO_DB.currentUser();
+  if(user) {
+    if(mise > 0) {
+      const r = POKO_DB.deductMise(mise);
+      if(!r.ok) { alert(r.msg); return; }
+    }
+  }
+  const gameOpts = {
+    mise: mise,
+    sabot: opts.sabot,
+    kin: opts.kin,
+    pot: mise * 4
+  };
+  sessionStorage.setItem('pokoOptions', JSON.stringify(gameOpts));
+  window.location.href = 'game.html';
+}
+
+updatePreview();
+// Show balance if logged in
+const _user = POKO_DB.currentUser();
+const _bb = document.getElementById('balanceBanner');
+if(_user) {
+  _bb.style.display='block';
+  _bb.innerHTML = 'Solde : <strong style="color:var(--gold)">' + _user.balance.toLocaleString('fr-FR') + ' FCFA</strong> — La mise sera déduite de votre solde';
+  document.getElementById('miseInput').max = _user.balance;
+}
+</script>
+</body>
+</html>
