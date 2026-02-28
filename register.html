@@ -129,7 +129,7 @@ AVATARS.forEach(a => {
 });
 document.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister();});
 function showErr(msg){const b=document.getElementById('errBox');b.textContent=msg;b.classList.add('show');}
-function doRegister(){
+async function doRegister(){
   const u=document.getElementById('username').value.trim();
   const e=document.getElementById('email').value.trim();
   const p=document.getElementById('password').value;
@@ -138,12 +138,16 @@ function doRegister(){
   if(!u||!e||!p||!c){showErr('Remplis tous les champs.');return;}
   if(p!==c){showErr('Les mots de passe ne correspondent pas.');return;}
   const btn=document.getElementById('regBtn');btn.disabled=true;
-  document.getElementById('btnTxt').textContent='Création…';document.getElementById('spin').style.display='block';
-  setTimeout(()=>{
-    const r=await POKO_DB.register(u,p,e,selectedAvatar);
-    if(r.ok){window.location.href='index.html';}
-    else{showErr(r.msg);btn.disabled=false;document.getElementById('btnTxt').textContent='Créer mon compte';document.getElementById('spin').style.display='none';}
-  },500);
+  document.getElementById('btnTxt').textContent='Création…';
+  document.getElementById('spin').style.display='block';
+  const r=await POKO_DB.register(u,p,e,selectedAvatar);
+  if(r.ok){window.location.href='index.html';}
+  else{
+    showErr(r.msg);
+    btn.disabled=false;
+    document.getElementById('btnTxt').textContent='Créer mon compte';
+    document.getElementById('spin').style.display='none';
+  }
 }
 </script>
 </body>

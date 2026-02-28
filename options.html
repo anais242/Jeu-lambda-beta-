@@ -232,35 +232,29 @@ function updatePreview() {
   document.getElementById('prev-mise').textContent = mise.toLocaleString() + ' FCFA';
 }
 
-function startGame() {
+async function startGame() {
   const mise = parseInt(document.getElementById('miseInput').value) || 0;
-  // If logged in, check balance and deduct mise
-  const user = POKO_DB.currentUser();
-  if(user) {
-    if(mise > 0) {
-      const r = POKO_DB.deductMise(mise);
-      if(!r.ok) { alert(r.msg); return; }
-    }
+  const user = await POKO_DB.currentUserAsync();
+  if(user && mise > 0) {
+    const r = await POKO_DB.deductMise(mise);
+    if(!r.ok) { alert(r.msg); return; }
   }
-  const gameOpts = {
-    mise: mise,
-    sabot: opts.sabot,
-    kin: opts.kin,
-    pot: mise * 4
-  };
+  const gameOpts = { mise, sabot: opts.sabot, kin: opts.kin, pot: mise * 4 };
   sessionStorage.setItem('pokoOptions', JSON.stringify(gameOpts));
   window.location.href = 'game.html';
 }
 
 updatePreview();
 // Show balance if logged in
-const _user = POKO_DB.currentUser();
-const _bb = document.getElementById('balanceBanner');
-if(_user) {
-  _bb.style.display='block';
-  _bb.innerHTML = 'Solde : <strong style="color:var(--gold)">' + _user.balance.toLocaleString('fr-FR') + ' FCFA</strong> — La mise sera déduite de votre solde';
-  document.getElementById('miseInput').max = _user.balance;
-}
+(async()=>{
+  const _user = await POKO_DB.currentUserAsync();
+  const _bb = document.getElementById('balanceBanner');
+  if(_user) {
+    _bb.style.display='block';
+    _bb.innerHTML = 'Solde : <strong style="color:var(--gold)">' + _user.balance.toLocaleString('fr-FR') + ' FCFA</strong> — La mise sera déduite de votre solde';
+    document.getElementById('miseInput').max = _user.balance;
+  }
+})();
 </script>
 </body>
 </html>

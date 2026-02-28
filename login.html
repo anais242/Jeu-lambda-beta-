@@ -81,18 +81,22 @@ body{background:var(--bg);font-family:'Crimson Pro',serif;color:var(--white);dis
 requireGuest();
 document.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
 function showErr(msg){const b=document.getElementById('errBox');b.textContent=msg;b.classList.add('show');}
-function doLogin(){
+async function doLogin(){
   const u=document.getElementById('username').value.trim();
   const p=document.getElementById('password').value;
   document.getElementById('errBox').classList.remove('show');
   if(!u||!p){showErr('Remplis tous les champs.');return;}
   const btn=document.getElementById('loginBtn');btn.disabled=true;
-  document.getElementById('btnTxt').textContent='Connexion…';document.getElementById('spin').style.display='block';
-  setTimeout(()=>{
-    const r=await POKO_DB.login(u,p);
-    if(r.ok){window.location.href='index.html';}
-    else{showErr(r.msg);btn.disabled=false;document.getElementById('btnTxt').textContent='Se connecter';document.getElementById('spin').style.display='none';}
-  },400);
+  document.getElementById('btnTxt').textContent='Connexion…';
+  document.getElementById('spin').style.display='block';
+  const r=await POKO_DB.login(u,p);
+  if(r.ok){window.location.href='index.html';}
+  else{
+    showErr(r.msg);
+    btn.disabled=false;
+    document.getElementById('btnTxt').textContent='Se connecter';
+    document.getElementById('spin').style.display='none';
+  }
 }
 </script>
 </body>

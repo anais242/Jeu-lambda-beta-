@@ -197,9 +197,11 @@ body::before{content:'';position:fixed;inset:0;background-image:radial-gradient(
 </div>
 
 <script>
-await requireAuth();
+(async()=>{
+const ok = await requireAuth();
+if(!ok) return;
 const user = await POKO_DB.currentUserAsync();
-if(!user){ window.location.href='login.html'; throw ''; }
+if(!user){ window.location.href='login.html'; return; }
 
 // ── NAV ──
 document.getElementById('navUser').innerHTML = `
