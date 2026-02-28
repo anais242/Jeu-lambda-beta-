@@ -3,7 +3,7 @@
 // ═══════════════════════════════════════════
 
 const SUPABASE_URL = 'https://agghgyidejzlxidrjswv.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_5E4A6-zcPdhqZ9JC87ZK4Q_j75J3m6W';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFnZ2hneWlkZWp6bHhpZHJqc3d2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNzQ3MjcsImV4cCI6MjA4Nzg1MDcyN30.tS050ZrnbmwLWo4sWbt85fyy_em3g7_BjL7PF5acIhg';
 
 // ── Client Supabase léger (fetch natif, sans SDK) ──────────
 const SB = {
